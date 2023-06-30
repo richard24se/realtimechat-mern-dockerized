@@ -1,0 +1,32 @@
+version: '3'
+
+services:
+  frontend:
+    build: 
+      context: .
+      dockerfile: ./docker/frontend.Dockerfile
+    stdin_open: true
+    tty: true
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+      - WATCHPACK_POLLING=true 
+      - WDS_SOCKET_HOST=127.0.0.1
+      - WDS_SOCKET_PORT=8024
+    command: >    
+      sh -c "ls -ls && yarn start" 
+    volumes:
+      - ./frontend/public:/ui/public
+      - ./frontend/src:/ui/src
+      - ./frontend/.env:/ui/.env.development
+    ports:
+      - "8024:3000"
+  server:
+    build: 
+      context: .
+      dockerfile: ./docker/server.Dockerfile
+    environment:
+      - PORT=5000
+    command: >    
+      sh -c "ls -ls && yarn start" 
+    ports:
+      - "5024:5000"
